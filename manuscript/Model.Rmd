@@ -1,0 +1,94 @@
+---
+title: "The Bartonella Project"
+author: "Meghna Krishnadas, Gyorgy Barabas, Rafael D'Andrea"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 2021 Jan 22
+
+## The Barabas-D'Andrea-Krishnada Host-pathogen model
+
+Transmission rates are the product of host mobility and pathogen infectivity. The latter is in turn a function of the match between pathogen proteins and host immune syndrome, which we model as a Gaussian function of the difference between pathogen  $z_l$ and host $w_k$ traits. 
+
+In order to avoid mobility being simply detrimental to the host, we make the intensity of infectivity be inversely related to mobility of the host. The simplest assumption is to make the intensity $\eta(\nu_k) \propto 1 / \nu_k$, which makes mobility drop out of $\beta$ and thus not affect ecoevolutionary outcomes.
+
+Also the match between pathogen and host traits should affect recovery rates $\gamma_{kl} = f(w_k, z_l)$.
+
+
+\begin{align}
+
+N_k &= \sum_s N_{ks}= S_k + \sum_l I_{kl} + R_k \\
+
+\frac{dS_k}{dt} &= \sum_s\phi_{ks} N_{ks} - \alpha N_k^2  - S_k \sum_{i, l}{\beta_{kil}I_{il}} - \mu_{k0} S_k \\
+
+\frac{dI_{kl}}{dt} &= S_k \sum_i{\beta_{kil} I_{il}} - \gamma_{kl}I_{kl} - \mu_{kl} I_{kl} \\
+
+\frac{dR_{k}}{dt} &= \sum_{l} \gamma_{kl}I_{kl} - \mu_{k(P+1)} R_k \\
+
+\frac{dz_l}{dt} &= \sigma_{p,l}^2 \left(\sum_{k,i} \frac{S_k}{I_{kl}} \frac{\partial \beta_{kil}}{\partial z_l}  I_{il} - \sum_k \frac{\partial \mu_{kl}}{\partial z_l} - \sum_k \frac{\partial \gamma_{kl}}{\partial z_l}\right)\\
+
+
+\frac{dx_k}{dt} &= \sigma_{h,k}^2 \sum_s \left(\frac{\partial \phi_{ks}}{\partial x_k} - \frac{\partial \mu_{ks}}{\partial x_k} \right)\frac{N_{ks}}{N_k} \\
+
+\end{align}
+
+where 
+
+\begin{align}
+
+\beta_{kil} &= \nu_k \nu_i \xi_{kl} \\
+
+\xi_{il} &= \eta(\nu_i) \frac{1}{\omega\sqrt{2\pi}}\exp\left( -\frac{(x_i-z_l)^2}{2\omega^2}\right)
+
+\end{align}
+
+and $\mu_{ki}$ is the mortality rate of an individual host of species $k$ at stage $i$, with the undertstanding that $i=0$ represents susceptibles, $i = P +1$ represents recovered individuals, and all other $i$'s represent infection with pathogen strain $i$. Similarly for $\phi_{ki}$. Also we are assuming generally that host mortality may depend on infection status and the trait of the pathogen.
+
+The most general model assumes that infection affects both fecundity rates $\phi_{ki}$ and mortality rates $\mu_{ki}$.
+
+The last element of the model is to tie fecundity and mortality rates to the stage of the host (i.e. whether it is infected with one of the pathogen strains.)
+
+$$
+\phi_{k0} = \phi_{k(P+1)} = \phi_k \\
+\phi_{ks} = \phi_k \left(1 - \exp\left(-\frac{(x_k - z_s)^2}{2\theta^2}\right)\right)
+$$
+A model for the effect of the disease on host mortality would be 
+
+$$
+\mu_{k0} = \mu_{k(P+1)} = \mu_k \\
+\mu_{ks} = \mu_k \left(1 + \exp\left(-\frac{(x_k - z_s)^2}{2\theta^2}\right)\right)
+$$
+
+Here's a glossary of symbols in the model
+
+Variable            Meaning
+--------            -------
+$S_k$                susceptibles of host species $k$ 
+$R_k$                susceptibles of host species $k$ 
+$I_{kl}$             infecteds from host $k$ with strain $l$
+$N_{ks}$             abundance of host $k$ at stage $s$, with $N_{k0} = S_k$ and $N_{k(P+1)} = R_k$
+$x_k$                trait of host $k$ (for the moment no intraspecific trait variation)
+$z_l$                trait of pathogen strain $l$
+
+Parameter            Meaning
+---------            -------
+$H$                  number of host species
+$P$                  number of pathogen strains
+$\alpha$             competition coefficient in the logistic term in dSdt
+$\nu_k$              mobility of host $k$
+$\xi_{kl}$           infectivity rate upon contact of pathogen $l$ onto host $k$
+$\sigma_{h, k}^2$    genetic variance in the host population $k$
+$\sigma_{p, l}^2$    genetic variance in the pathogen population $l$
+$\phi_{ks}$          fecundity of host $k$ at stage $s$
+$\phi_k$             baseline fecundity of host $k$ (fecundity of healthy individuals)
+$\mu_{ks}$           mortality rate of host $k$ at stage $s$ (stage here means $S$, $I$, $R$)
+$\mu_k$              baseline mortality of host $k$ (mortality of uninfected individuals)
+$\gamma_{kl}$        recovery rate of host $k$ infected with pathogen strain $l$
+$\omega$             width of the trait matching infectivity $\xi$
+$\theta$             width of the trait-matching impact of the pathogen on the host via $\phi$ and $\mu$
+$\eta(\nu)$          intensity (multiplicative factor) of the infectivity rate, controls how infectious overall the pathogen is
+$\beta_{kil}$        infection rate: rate at which a susceptible individual of host $k$ is infected by a sick individual of host $i$ with pathogen strain $l$
